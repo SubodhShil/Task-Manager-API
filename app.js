@@ -2,24 +2,13 @@ const express = require('express');
 const tasks = require('./routes/tasks');
 const connectDB = require('./db/connect');
 require('dotenv').config();
-
+const cors = require('cors');
 const app = express();
 
 // Middleware
+app.use(express.static('./public'));
 app.use(express.json());
-
-// template engine 
-app.set('view engine', 'ejs');
-
-
-app.get('/', (req, res) => {
-    res.render('index');
-    // res.status(200).send("Welcome to home page");
-});
-
-app.get('/hello', (req, res) => {
-    res.status(200).send("OK");
-});
+app.use(cors());
 
 
 // task route

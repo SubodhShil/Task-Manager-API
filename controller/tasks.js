@@ -29,17 +29,55 @@ const getTask = async (req, res) => {
             return res.status(404).json({ msg: 'Task not found' })
         }
 
-        res.status(200).json({ task });
-
+        res.status(200).json({ success: true, message: 'Your task', data: task });
     } catch (error) {
-        res.status(500).json({ msg: error });
+        res.status(500).json({ success: false, message: error.message || "Invalid task id" });
     }
 };
 
 
+
+// PATCH
 const updateTask = async (req, res) => {
-    res.send(`Task ${req.params.id} is updated`)
-    
+    try {
+        const { id: taskID } = req.params;
+        const task = await Task.findOneAndUpdate(
+            { _id: taskID },
+            { $set: req.body },
+            { new: true, runValidators: true }
+        );
+
+        if (!task) {
+            return res.status(404).json({ success: false, message: "No such task" });
+        }
+
+        res.status(200).json({ success: true, message: "Task updated successfully", data: task });
+
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message || "Something went wrong" });
+    }
+};
+
+
+// PUT 
+const editTask = async (req, res) => {
+    try {
+        const { id: taskID } = req.params;
+        const task = await Task.findOneAndReplace(
+            { _id: taskID },
+            req.body,
+            { new: true, runValidators: true, overwrite: true }
+        );
+
+        if (!task) {
+            return res.status(404).json({ success: false, message: "No such task" });
+        }
+
+        res.status(200).json({ success: true, message: "Task updated successfully", data: task });
+
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message || "Something went wrong" });
+    }
 };
 
 
@@ -65,5 +103,6 @@ module.exports = {
     createTask,
     getTask,
     updateTask,
-    deleteTask
+    deleteTask,
+    editTask
 }; 
