@@ -1,33 +1,34 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose');;
+const Schema = mongoose.Schema;
 
-const TaskSchema = new mongoose.Schema({
-    username: {
+const TaskSchema = new Schema({
+    taskName: {
         type: String,
-        required: [true, 'Username is required'],
-        unique: true,
+        required: [true, 'Task name is required'],
         trim: true,
-        minlength: [3, 'Username must be at least 3 characters'],
-        maxlength: [30, 'Username cannot exceed 30 characters'],
-        match: [/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores']
+        minlength: [3, 'Task name must be at least 3 characters'],
+        maxlength: [100, 'Task name cannot exceed 100 characters']
     },
-    email: {
+    taskContent: {
         type: String,
-        required: [true, 'Email is required'],
-        unique: true,
         trim: true,
-        lowercase: true,
-        match: [/^\S+@\S+\.\S+$/, 'Please use a valid email address']
+        default: '',
+        maxlength: [1000, 'Task content cannot exceed 1000 characters']
     },
-    role: {
-        type: String,
-        enum: {
-            values: ['user', 'admin', 'moderator'],
-            message: '{VALUE} is not a valid role'
-        },
-        default: 'user'
+    isCompleted: {
+        type: Boolean,
+        default: false
     },
-    complete: Boolean,
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: false
+    },
+    dueDate: {
+        type: Date,
+        default: null
+    }
 });
 
-const Task = mongoose.model('User', TaskSchema);
+const Task = mongoose.model('Task', TaskSchema);
 module.exports = Task;
